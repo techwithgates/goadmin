@@ -14,6 +14,10 @@ import (
 	"github.com/techwithgates/goadmin/routes"
 )
 
+//go:embed template/*
+//go:embed static/css*
+//go:embed static/js*
+//go:embed static/image*
 var embedder embed.FS
 
 var command = &cobra.Command{
