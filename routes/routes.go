@@ -1,11 +1,11 @@
 package routes
 
 import (
-	"admin_panel/database"
-	"admin_panel/utils"
 	"context"
 	"encoding/json"
 	"fmt"
+	"goadmin/database"
+	"goadmin/utils"
 	"io"
 	"log"
 	"net/http"

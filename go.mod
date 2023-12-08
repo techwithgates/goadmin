@@ -1,4 +1,4 @@
-module admin_panel
+module goadmin
 
 go 1.21.3
 

@@ -1,9 +1,9 @@
 package utils
 
 import (
-	"admin_panel/database"
 	"context"
 	"fmt"
+	"goadmin/database"
 	"log"
 	"strings"
 

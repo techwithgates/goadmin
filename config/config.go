@@ -1,8 +1,8 @@
 package config
 
 import (
-	"admin_panel/database"
 	"context"
+	"goadmin/database"
 	"log"
 	"os"
 	"path/filepath"

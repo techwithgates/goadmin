@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"admin_panel/config"
+	"goadmin/config"
 	"io"
 	"log"
 	"mime/multipart"

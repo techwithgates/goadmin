@@ -6,8 +6,8 @@ import (
 	"log"
 	"strings"
 
-	"admin_panel/config"
-	"admin_panel/database"
+	"goadmin/config"
+	"goadmin/database"
 
 	"github.com/jackc/pgx/v5/pgtype"
 )

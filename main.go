@@ -1,8 +1,8 @@
 package main
 
 import (
-	"admin_panel/config"
-	"admin_panel/routes"
+	"goadmin/config"
+	"goadmin/routes"
 	"os"
 
 	"fmt"
