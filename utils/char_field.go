@@ -2,9 +2,10 @@ package utils
 
 import (
 	"fmt"
-	"goadmin/database"
 	"log"
 	"strings"
+
+	"github.com/techwithgates/goadmin/database"
 )
 
 var charMap = map[string]string{

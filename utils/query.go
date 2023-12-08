@@ -3,9 +3,10 @@ package utils
 import (
 	"context"
 	"fmt"
-	"goadmin/database"
 	"log"
 	"strings"
+
+	"github.com/techwithgates/goadmin/database"
 
 	"golang.org/x/crypto/bcrypt"
 )

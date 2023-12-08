@@ -1,12 +1,13 @@
 package utils
 
 import (
-	"goadmin/config"
 	"io"
 	"log"
 	"mime/multipart"
 	"os"
 	"path/filepath"
+
+	"github.com/techwithgates/goadmin/config"
 )
 
 func UploadFile(bodyData *map[string]interface{}, key string, file *multipart.FileHeader) {

@@ -2,12 +2,13 @@ package config
 
 import (
 	"context"
-	"goadmin/database"
 	"log"
 	"os"
 	"path/filepath"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/techwithgates/goadmin/database"
 )
 
 var mediaPath string

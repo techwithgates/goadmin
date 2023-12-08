@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"goadmin/database"
-	"goadmin/utils"
 	"io"
 	"log"
 	"net/http"
@@ -14,6 +12,9 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/julienschmidt/httprouter"
+
+	"github.com/techwithgates/goadmin/database"
+	"github.com/techwithgates/goadmin/utils"
 )
 
 type Data struct {

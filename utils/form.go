@@ -6,10 +6,9 @@ import (
 	"log"
 	"strings"
 
-	"goadmin/config"
-	"goadmin/database"
-
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/techwithgates/goadmin/config"
+	"github.com/techwithgates/goadmin/database"
 )
 
 var intField = `

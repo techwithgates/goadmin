@@ -1,16 +1,16 @@
 package main
 
 import (
-	"goadmin/config"
-	"goadmin/routes"
-	"os"
-
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/spf13/cobra"
+
+	"github.com/techwithgates/goadmin/config"
+	"github.com/techwithgates/goadmin/routes"
 )
 
 var command = &cobra.Command{
