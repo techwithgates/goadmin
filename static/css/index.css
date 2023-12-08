@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: rgb(212, 212, 212);
+}
+
+.header {
+    padding: 1px 0 1px 40px;
+    background-color: rgb(33, 36, 101);
+    color: white;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    display: flex;
+    gap: 15px;
+}
+
+.header img {
+    height: 40px;
+    margin-top: 5px;
+}
+
+.navigator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0 10px 10px;
+}
+
+.navigator-item {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+
+.navigator-item:nth-last-child(2) {
+    font-weight: bold;
+}
+
+.navigator-item:nth-last-child(2) a {
+    cursor: auto;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.arrow-icon {
+    width: 16px;
+    margin-top: 7px;
+}
+
+.outer-btn-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+#addBtn {
+    display: flex;
+    justify-content: center;
+    width: 4.5rem;
+    padding: 4px 0 5px 0;
+    background-color: rgb(50, 50, 239);
+    color: white;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    gap: 3px;
+}
+
+#deleteBtn {
+    display: flex;
+    justify-content: center;
+    width: 5rem;
+    padding: 4px 0 5px 0;
+    background-color: rgb(246, 44, 44);
+    color: white;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    gap: 3px;
+    display: none;
+}
+
+.icon {
+    color: white;
+    width: 19px;
+    height: 19px;
+}
+
+#checkboxArea {
+    display: flex;
+}
+
+#addBtn:hover {
+    background-color: rgb(70, 110, 231);
+}
+
+#deleteBtn:hover {
+    background-color: rgb(255, 64, 64);
+}
+
+.outter-container {
+    padding: 1rem;
+}
+
+.outter-container p {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding-left: 10px;
+}
+
+.inner-container {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 10px;
+    padding: 0 15px 15px 15px;
+}
+
+.header-line {
+    border: none;
+    height: 0.5px;
+    background-color: gray;
+    padding-bottom: 0.5px;
+}
+
+.element-list {
+    max-height: 34.5rem;
+    overflow-y: auto;
+}
+
+.table-data, .object-data {
+    padding: 11px 0 11px 10px;
+    letter-spacing: 0.5px;
+}
+
+.table-data:hover {
+    cursor: pointer;
+    background-color: rgb(238, 236, 236);
+}
+
+.object-data:hover {
+    background-color: rgb(238, 236, 236);
+}
+
+.object-data {
+    display: flex;
+    gap: 15px;
+}
+
+.table-data span, .object-data span {
+    position: relative;
+    cursor: pointer;
+}
+
+.table-data:hover span::after, .object-data:hover span::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    border-bottom: 1px solid #000;
+}
+
+input[type="checkbox"] {
+    height: 1rem;
+    width: 20px;
+}

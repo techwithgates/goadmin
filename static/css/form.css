@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+#formContainer {
+    max-height: 32rem;
+    overflow-y: auto;
+    letter-spacing: 1px;
+    padding-right: 15px;
+}
+
+.form-field {
+    padding: 6px 10px;
+    flex-flow: column;
+}
+
+label {
+    font-size: 15px;
+}
+
+input, textarea {
+    width: 98%;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    padding: 10px 10px 10px 12px;
+    background-color: rgb(237, 233, 233);
+    font-size: 15px;
+    margin-top: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+}
+
+.checkbox-field {
+    padding-left: 12px;
+    display: flex;
+}
+
+textarea {
+    height: 8rem;
+}
+
+input[type="checkbox"] {
+    height: 1rem;
+    width: 30px;
+    margin-top: 4px;
+}
+
+.button-area {
+    padding: 20px 0px 0px 10px;
+}
+
+button {
+    padding: 10px 0;
+    background-color: rgb(46, 46, 185);
+    color: white;
+    outline: none;
+    border: none;
+    width: 100%;
+    font-size: 16px;
+    border-radius: 5px;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: rgb(65, 65, 211); 
+}
