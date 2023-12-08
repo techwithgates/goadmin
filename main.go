@@ -55,7 +55,7 @@ func startAdmin(dbUrl string, port int) {
 	router.GET("/tables", routes.ListTables)
 
 	// display the access URL on the terminal
-	fmt.Printf("Server is running on: http://localhost:%d/tables\n", port)
+	fmt.Printf("EAP server is running on: http://localhost:%d/tables\n", port)
 
 	// run the http server
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), router)
@@ -67,7 +67,7 @@ func startAdmin(dbUrl string, port int) {
 
 func init() {
 	command.Flags().StringP("db", "d", "postgres://postgres:pgadmin@localhost:5432/goadmin", "PostgreSQL database URL")
-	command.Flags().IntP("port", "p", 7000, "Port number to run the admin panel server")
+	command.Flags().IntP("port", "p", 7000, "Port number to run EAP server")
 }
 
 func main() {

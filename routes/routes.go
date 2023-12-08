@@ -7,6 +7,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"text/template"
 
@@ -33,7 +35,9 @@ type Output struct {
 	Navigator Navigator
 }
 
-var htmlTemplate, _ = template.ParseFiles("template/base.html", "template/content.html")
+var workingDir, _ = os.Getwd()
+var tmplPath = workingDir + "/template"
+var htmlTemplate, err = template.ParseFiles(filepath.Join(tmplPath, "base.html"), filepath.Join(tmplPath, "content.html"))
 var dbContext = context.Background()
 
 // function that retrieves & returns table names from the database
@@ -66,7 +70,7 @@ func ListTableObjects(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	tableName := ps.ByName("tableName")
 
 	// verifiy if the table name exists in the database
-	err := db.QueryRow(dbContext, database.TableVerifyStmt, tableName).Scan(&tableName)
+	err = db.QueryRow(dbContext, database.TableVerifyStmt, tableName).Scan(&tableName)
 
 	if err != nil {
 		if err == pgx.ErrNoRows {
