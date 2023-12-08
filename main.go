@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,6 +13,8 @@ import (
 	"github.com/techwithgates/goadmin/config"
 	"github.com/techwithgates/goadmin/routes"
 )
+
+var embedder embed.FS
 
 var command = &cobra.Command{
 	Use:   "start",
@@ -38,6 +41,9 @@ func startAdmin(dbUrl string, port int) {
 
 	// set the server port for viewing media content
 	config.SetPort(port)
+
+	// set embedder for template execution
+	routes.SetEmbedder(&embedder)
 
 	// serve static files
 	router.ServeFiles("/static/*filepath", http.Dir("static"))

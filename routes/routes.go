@@ -2,13 +2,12 @@ package routes
 
 import (
 	"context"
+	"embed"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strings"
 	"text/template"
 
@@ -35,10 +34,20 @@ type Output struct {
 	Navigator Navigator
 }
 
-var workingDir, _ = os.Getwd()
-var tmplPath = workingDir + "/template"
-var htmlTemplate, err = template.ParseFiles(filepath.Join(tmplPath, "base.html"), filepath.Join(tmplPath, "content.html"))
+var htmlTemplate *template.Template
 var dbContext = context.Background()
+var embedder *embed.FS
+
+func SetEmbedder(_embed *embed.FS) {
+	embedder = _embed
+	tmpl, err := template.ParseFS(embedder, "template/base.html", "template/content.html")
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	htmlTemplate = tmpl
+}
 
 // function that retrieves & returns table names from the database
 func ListTables(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -70,7 +79,7 @@ func ListTableObjects(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	tableName := ps.ByName("tableName")
 
 	// verifiy if the table name exists in the database
-	err = db.QueryRow(dbContext, database.TableVerifyStmt, tableName).Scan(&tableName)
+	err := db.QueryRow(dbContext, database.TableVerifyStmt, tableName).Scan(&tableName)
 
 	if err != nil {
 		if err == pgx.ErrNoRows {
@@ -121,10 +130,10 @@ func ListTableObjects(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	}
 
 	// execute template
-	executionErr := htmlTemplate.Execute(w, output)
+	err = htmlTemplate.Execute(w, output)
 
-	if executionErr != nil {
-		http.Error(w, executionErr.Error(), http.StatusInternalServerError)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
