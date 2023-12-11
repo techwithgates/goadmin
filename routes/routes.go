@@ -34,7 +34,6 @@ type Output struct {
 	Navigator Navigator
 }
 
-// var htmlTemplate, _ = template.ParseFiles("template/base.html", "template/content.html")
 var htmlTemplate *template.Template
 var dbContext = context.Background()
 var embedder embed.FS

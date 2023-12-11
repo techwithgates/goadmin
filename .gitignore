@@ -1,2 +1,3 @@
-media
+media/*
+!media/.gitkeep
 .env
