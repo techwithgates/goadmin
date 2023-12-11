@@ -49,17 +49,17 @@ func startAdmin(dbUrl string, port int) {
 	// set the embedder to apply in routes
 	routes.SetEmbedder(&embedder)
 
+	// serve non-embedded dynamic file upload
+	router.ServeFiles("/media/*filepath", http.Dir("media"))
+
 	// set the static root directory
 	staticRoot, err := fs.Sub(embedder, "static")
-
-	// set the media root directory
-	mediaRoot, err := fs.Sub(embedder, "media")
 
 	// serve embedded static files
 	router.ServeFiles("/static/*filepath", http.FS(staticRoot))
 
 	// serve embedded media files
-	router.ServeFiles("/media/*filepath", http.FS(mediaRoot))
+	// router.ServeFiles("/media/*filepath", http.FS(mediaRoot))
 
 	// configure route definitions
 	router.GET("/tables/:tableName/new-object", routes.AddObject)
