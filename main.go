@@ -31,14 +31,6 @@ var command = &cobra.Command{
 //go:embed media/*
 var embedder embed.FS
 
-func getStaticFS() http.FileSystem {
-	staticRoot, err := fs.Sub(embedder, "static")
-	if err != nil {
-		log.Fatal(err)
-	}
-	return http.FS(staticRoot)
-}
-
 func startAdmin(dbUrl string, port int) {
 	// setup postgres db connection
 	config.ConnectDb(dbUrl)

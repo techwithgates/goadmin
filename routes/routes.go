@@ -8,9 +8,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-
-	// "os"
-	// "path/filepath"
 	"strings"
 	"text/template"
 
