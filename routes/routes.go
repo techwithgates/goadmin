@@ -8,6 +8,9 @@ import (
 	"io"
 	"log"
 	"net/http"
+
+	// "os"
+	// "path/filepath"
 	"strings"
 	"text/template"
 
@@ -34,19 +37,23 @@ type Output struct {
 	Navigator Navigator
 }
 
+// var htmlTemplate, _ = template.ParseFiles("template/base.html", "template/content.html")
 var htmlTemplate *template.Template
 var dbContext = context.Background()
-var embedder *embed.FS
+var embedder embed.FS
 
-func SetEmbedder(_embed *embed.FS) {
-	embedder = _embed
-	tmpl, err := template.ParseFS(embedder, "template/base.html", "template/content.html")
+func SetEmbedder(_embedder *embed.FS) {
+	embedder = *_embedder
+	baseFile, err := embedder.ReadFile("template/base.html")
+	contentFile, err := embedder.ReadFile("template/content.html")
 
 	if err != nil {
 		log.Println(err)
 	}
 
-	htmlTemplate = tmpl
+	tmpl, err := template.New("eap").Parse(string(baseFile))
+	tmpl, err = tmpl.Clone()
+	htmlTemplate, err = tmpl.Parse(string(contentFile))
 }
 
 // function that retrieves & returns table names from the database
@@ -64,11 +71,10 @@ func ListTables(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		Navigator: Navigator{ShowObjectsPath: false},
 	}
 
-	// execute html template with dynamic table names
-	executionErr := htmlTemplate.Execute(w, output)
+	err := htmlTemplate.Execute(w, output)
 
-	if executionErr != nil {
-		http.Error(w, executionErr.Error(), http.StatusInternalServerError)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -129,7 +135,6 @@ func ListTableObjects(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 		Navigator: Navigator{TableName: tableName, ShowObjectsPath: true, ShowCheckBox: hasMany},
 	}
 
-	// execute template
 	err = htmlTemplate.Execute(w, output)
 
 	if err != nil {
@@ -140,7 +145,6 @@ func ListTableObjects(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 
 // function that returns form template and handles create operation
 func AddObject(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == http.MethodGet {

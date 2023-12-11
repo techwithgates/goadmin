@@ -3,6 +3,8 @@ package main
 import (
 	"embed"
 	"fmt"
+
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -14,12 +16,6 @@ import (
 	"github.com/techwithgates/goadmin/routes"
 )
 
-//go:embed template/*
-//go:embed static/css*
-//go:embed static/js*
-//go:embed static/image*
-var embedder embed.FS
-
 var command = &cobra.Command{
 	Use:   "start",
 	Short: "Starts the EAP server",
@@ -30,6 +26,19 @@ var command = &cobra.Command{
 	},
 }
 
+//go:embed template/*
+//go:embed static/*
+//go:embed media/*
+var embedder embed.FS
+
+func getStaticFS() http.FileSystem {
+	staticRoot, err := fs.Sub(embedder, "static")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return http.FS(staticRoot)
+}
+
 func startAdmin(dbUrl string, port int) {
 	// setup postgres db connection
 	config.ConnectDb(dbUrl)
@@ -37,7 +46,6 @@ func startAdmin(dbUrl string, port int) {
 	// initialize http router
 	router := httprouter.New()
 
-	// get the current working directory
 	workingDir, _ := os.Getwd()
 
 	// setup the media directory for file uploads
@@ -46,14 +54,20 @@ func startAdmin(dbUrl string, port int) {
 	// set the server port for viewing media content
 	config.SetPort(port)
 
-	// set embedder for template execution
+	// set the embedder to apply in routes
 	routes.SetEmbedder(&embedder)
 
-	// serve static files
-	router.ServeFiles("/static/*filepath", http.Dir("static"))
+	// set the static root directory
+	staticRoot, err := fs.Sub(embedder, "static")
 
-	// serve media files
-	router.ServeFiles("/media/*filepath", http.Dir("media"))
+	// set the media root directory
+	mediaRoot, err := fs.Sub(embedder, "media")
+
+	// serve embedded static files
+	router.ServeFiles("/static/*filepath", http.FS(staticRoot))
+
+	// serve embedded media files
+	router.ServeFiles("/media/*filepath", http.FS(mediaRoot))
 
 	// configure route definitions
 	router.GET("/tables/:tableName/new-object", routes.AddObject)
@@ -64,13 +78,9 @@ func startAdmin(dbUrl string, port int) {
 	router.GET("/tables/:tableName", routes.ListTableObjects)
 	router.GET("/tables", routes.ListTables)
 
-	// display the access URL on the terminal
 	fmt.Printf("EAP server is running on: http://localhost:%d/tables\n", port)
 
-	// run the http server
-	err := http.ListenAndServe(fmt.Sprintf(":%d", port), router)
-
-	if err != nil {
+	if err = http.ListenAndServe(fmt.Sprintf(":%d", port), router); err != nil {
 		log.Fatal(err)
 	}
 }

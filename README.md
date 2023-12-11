@@ -70,13 +70,18 @@ EAP will include the primary key fields as part of the HTML input fields on the 
 <br><br>
 
 # Getting Started
-Run the following command to install EAP into your GOPATH.
+## Prerequisites
+- Golang must be installed on your machine
+- Ensure that your `$GOPATH/bin` directory is set in your environmental variable so that you can run the goadmin.exe file from any location on your system
+
+
+Run the following command to fetch EAP package.
 
 ```
 go get github.com/techwithgates/goadmin@latest
 ```
 
-Then, run the following command to compile EAP to an executable binary file
+Then, run the next command to install and compile EAP to an executable binary file
 
 ```
 go install github.com/techwithgates/goadmin@latest
