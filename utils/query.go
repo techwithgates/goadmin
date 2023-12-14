@@ -42,8 +42,8 @@ func GetPkField(tableName string) string {
 
 	row := db.QueryRow(dbContext, database.FindPkStmt, tableName, tableName+"_pkey")
 
-	if scanErr := row.Scan(&pkField, nil); scanErr != nil {
-		log.Println(scanErr)
+	if err := row.Scan(&pkField, nil); err != nil {
+		log.Println(err)
 		return ""
 	}
 

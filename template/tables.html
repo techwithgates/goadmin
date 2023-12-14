@@ -1,0 +1,18 @@
+
+{{define "content"}}
+    <div class="navigator">
+        <div class="navigator-item">
+            <a href="/tables">Tables</a>
+        </div>
+    </div>
+    <div class="header-line"></div>
+    <div class="element-list">
+        {{- range .}}
+            <a href="/tables/{{.}}?offset=0">
+                <div class="table-data" data-tableName="{{.}}">
+                    <span>{{.}}</span>
+                </div>
+            </a>
+        {{end}}
+    </div>
+{{end}}

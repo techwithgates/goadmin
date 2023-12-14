@@ -1,15 +1,10 @@
 package database
 
-import (
-	"context"
+import "github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/jackc/pgx/v5/pgxpool"
-)
-
-var dbContext = context.Background()
 var Db *pgxpool.Pool
 
-// read statement
+// statement to get table names
 var RetrieveTableStmt = `
 	SELECT table_name
 	FROM information_schema.tables
@@ -47,7 +42,7 @@ var GetMetaDataStmt = `
 `
 
 // statement to a list of PKs
-var RetrievePksStmt = `SELECT %s FROM %s ORDER BY %s`
+var RetrievePksStmt = `SELECT %s FROM %s ORDER BY %s LIMIT %d OFFSET %d`
 
 // statement to insert dynamic data to dynamic column fields
 var InsertDataStmt = "INSERT INTO %s (%s) VALUES (%s)"
@@ -58,15 +53,17 @@ var UpdateDataStmt = "UPDATE %s SET %s WHERE %s=$1"
 // statement to get a single value of a column field
 var GetFieldStmt = `SELECT %s FROM %s WHERE %s=$1`
 
+var GetTotalObjStmt = `SELECT COUNT(*) FROM %s`
+
 // statement to delete a single data record
 var DeleteDataStmt = `DELETE FROM %s WHERE %s IN (%s)`
 
-// read statement, to distinguish char and file field
+// statement to distinguish char and file field
 var GetColNumber = `
 	SELECT attnum
 	FROM pg_attribute
 	WHERE attrelid='%s'::regclass AND attname='%s'
 `
 
-// read statement, to distinguish char and file field
+// statement to distinguish char and file field
 var GetCommentStmt = `SELECT col_description('%s'::regclass, %v)`

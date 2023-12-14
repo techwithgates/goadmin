@@ -67,7 +67,7 @@ func startAdmin(dbUrl string, port int) {
 	router.GET("/tables/:tableName/old-object/:id", routes.EditObject)
 	router.PATCH("/tables/:tableName/old-object/:id", routes.EditObject)
 	router.DELETE("/tables/:tableName/old-object", routes.DeleteObject)
-	router.GET("/tables/:tableName", routes.ListTableObjects)
+	router.GET("/tables/:tableName", routes.ListObjects)
 	router.GET("/tables", routes.ListTables)
 
 	fmt.Printf("EAP server is running on: http://localhost:%d/tables\n", port)

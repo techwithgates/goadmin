@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -18,124 +19,137 @@ import (
 	"github.com/techwithgates/goadmin/utils"
 )
 
-type Data struct {
-	Tables  []string
-	Objects []any
+type Paginator struct {
+	Offset       int
+	Objects      []any
+	TableName    string
+	TotalObjects int
+	ShowCheckBox bool
+	HasMore      bool
 }
 
-type Navigator struct {
-	TableName       string
-	ShowObjectsPath bool
-	ShowCheckBox    bool
-}
-
-type Output struct {
-	Data      Data
-	Navigator Navigator
-}
-
-var htmlTemplate *template.Template
+var htmlTemplate, baseTemplate *template.Template
+var tablesFile, objectsFile []byte
 var dbContext = context.Background()
 var embedder embed.FS
 
+// variables for pagination
+var pkField string
+var totalObjects int
+var pageLimit int = 20
+
+// var offset = 0
+
 func SetEmbedder(_embedder *embed.FS) {
 	embedder = *_embedder
-	baseFile, err := embedder.ReadFile("template/base.html")
-	contentFile, err := embedder.ReadFile("template/content.html")
 
-	if err != nil {
-		log.Println(err)
-	}
+	baseFile, _ := embedder.ReadFile("template/base.html")
+	tblFile, _ := embedder.ReadFile("template/tables.html")
+	objFile, _ := embedder.ReadFile("template/objects.html")
 
-	tmpl, err := template.New("eap").Parse(string(baseFile))
-	tmpl, err = tmpl.Clone()
-	htmlTemplate, err = tmpl.Parse(string(contentFile))
+	tablesFile = tblFile
+	objectsFile = objFile
+
+	baseTmpl, _ := template.New("eap").Parse(string(baseFile))
+	baseTemplate, _ = baseTmpl.Clone()
 }
 
 // function that retrieves & returns table names from the database
 func ListTables(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	data := Data{}
+	data := []string{}
 
 	// iterate & append table names
 	for _, name := range utils.GetTables() {
-		data.Tables = append(data.Tables, name)
+		data = append(data, name)
 	}
 
-	// set the output format
-	output := Output{
-		Data:      data,
-		Navigator: Navigator{ShowObjectsPath: false},
-	}
-
-	err := htmlTemplate.Execute(w, output)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	htmlTemplate, _ = baseTemplate.Parse(string(tablesFile))
+	htmlTemplate.Execute(w, data)
 }
 
 // function that returns objects of a table
-func ListTableObjects(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func ListObjects(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	db := database.Db
 	tableName := ps.ByName("tableName")
 
-	// verifiy if the table name exists in the database
-	err := db.QueryRow(dbContext, database.TableVerifyStmt, tableName).Scan(&tableName)
+	// get the offset query param
+	offset, _ := strconv.Atoi(r.URL.Query().Get("offset"))
 
-	if err != nil {
-		if err == pgx.ErrNoRows {
-			log.Println(err)
-			http.NotFound(w, r)
-			return
-		} else {
-			log.Println(err)
+	// to check and prevent additional queries
+	if offset == 0 {
+		// verifiy if the table name exists in the database
+		err := db.QueryRow(dbContext, database.TableVerifyStmt, tableName).Scan(&tableName)
+
+		if err != nil {
+			if err == pgx.ErrNoRows {
+				log.Println(err)
+				return
+			} else {
+				log.Println(err)
+			}
 		}
+
+		// query the total number of objects
+		db.QueryRow(dbContext, fmt.Sprintf(database.GetTotalObjStmt, tableName)).Scan(&totalObjects)
+
+		// query the pk field of the table
+		_pkField := utils.GetPkField(tableName)
+
+		// save the pk field for efficient data retrieval
+		pkField = _pkField
 	}
 
-	// query the pk field of the table
-	pkField := utils.GetPkField(tableName)
-
 	// select pk fields from the table
-	rows, queryErr := db.Query(dbContext, fmt.Sprintf(database.RetrievePksStmt, pkField, tableName, pkField))
+	rows, err := db.Query(dbContext, fmt.Sprintf(database.RetrievePksStmt, pkField, tableName, pkField, pageLimit, offset))
 
-	if queryErr != nil {
-		log.Println(queryErr)
+	if err != nil {
+		log.Println(err)
 		return
 	}
 	defer rows.Close()
 
-	idList := []interface{}{}
+	idList := []any{}
 	var id any
 
 	// iterate the table rows and append data into map
 	for rows.Next() {
 		err := rows.Scan(&id)
+
 		if err != nil {
-			fmt.Println(err)
 			return
 		}
+
 		idList = append(idList, id)
 	}
 
-	hasMany := false
+	showCb, hasMore := false, false
 
 	// if there are any data record, select all checkbox will be displayed
 	if len(idList) > 0 {
-		hasMany = true
+		showCb = true
 	}
 
-	// set output format
-	output := Output{
-		Data:      Data{Objects: idList},
-		Navigator: Navigator{TableName: tableName, ShowObjectsPath: true, ShowCheckBox: hasMany},
+	// check if there more data to load
+	if offset+pageLimit < totalObjects {
+		hasMore = true
 	}
 
-	err = htmlTemplate.Execute(w, output)
+	// set data output
+	paginator := Paginator{
+		Offset:       offset,
+		Objects:      idList,
+		TotalObjects: totalObjects,
+		ShowCheckBox: showCb,
+		TableName:    tableName,
+		HasMore:      hasMore,
+	}
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if offset > 0 {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(paginator)
+	} else {
+		htmlTemplate, _ = baseTemplate.Parse(string(objectsFile))
+		htmlTemplate.Execute(w, paginator)
 	}
 }
 

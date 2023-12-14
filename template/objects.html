@@ -1,0 +1,50 @@
+
+{{define "content"}}
+    <div class="navigator">
+        <div class="navigator-item">
+            <a href="/tables">Tables</a>
+        </div>
+        <div class="arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                class="arrow-icon">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+        </div>
+        <div class="navigator-item"><a href="#">Objects</a></div>
+        <div class="outer-btn-area">
+            {{if .ShowCheckBox}}
+                <div id="checkboxArea">
+                    <input id="checkboxAll" type="checkbox" onclick="selectAllObjects(this.checked)">
+                    <span>Select All</span>
+                </div>
+            {{end}}
+            <div id="addBtn" class="openModalBtn" data-tableName="{{.TableName}}">Add
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                    class="icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                </svg>
+            </div>
+            <div id="deleteBtn" data-tableName="{{.TableName}}">Delete</div>
+        </div>
+    </div>
+    <div class="header-line"></div>
+    <div class="element-list">
+        <div id="objectDataArea">
+            {{range $index, $value := .Objects}}
+                <div class="object-data">
+                    <input class="object-checkbox" type="checkbox" onclick="selectObject(this.checked, '{{$value}}')">
+                    <span class="openModalBtn" data-objectId="{{$value}}" data-tableName="{{with $.TableName}}{{.}}{{end}}">
+                        {{with $.TableName}}{{.}} - {{end}}(ID: {{$value}})
+                    </span>
+                </div>
+            {{end}}
+        </div>
+        <div id="loadMoreArea">
+            {{if .HasMore}}
+                <div id="loadMore">
+                    <div onclick="loadMore('{{.TableName}}', '{{.Offset}}')">*** Load More ***</div>
+                </div>
+            {{end}}
+        </div>
+    </div>
+{{end}}
