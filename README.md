@@ -13,7 +13,7 @@ On "tables" page, EAP will display the available table names. When the user sele
 - tables with the absent of primary key field is not supported
 - tables with custom primary key constraint names are not supported (A default pk constraint name looks like `<table_name>_pkey`)
 - composite primary key fields may not work properly in update operation
-- pagination and search bar features are not currently available
+- search bar feature is not currently available
 <br><br>
 
 ## Explicitly Supported Fields / Data Types
